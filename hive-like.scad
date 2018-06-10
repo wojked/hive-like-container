@@ -1,4 +1,4 @@
-// Dependencies: https://github.com/openscad/MCAD
+// Dependencies from https://github.com/openscad/MCAD
 
 include <shapes.scad>
 
