@@ -8,12 +8,13 @@
 */
 
 HEX_HEIGHT = 65.4;
-WALL_THICKNESS = 4.72;
+WALL_THICKNESS = 4.82;
+CONNECTOR_HEIGHT = 4.82;
 DEPTH = 4;
 BACK_WALL_TYPE = 0;
 TOLERANCE = 0.1;
 
-hive_hex(HEX_HEIGHT, WALL_THICKNESS, DEPTH, BACK_WALL_TYPE, TOLERANCE);
+hive_hex(HEX_HEIGHT, WALL_THICKNESS, CONNECTOR_HEIGHT, DEPTH, BACK_WALL_TYPE, TOLERANCE);
 
 
 
@@ -100,7 +101,7 @@ module back_wall(height, thickness, type){
     }
 }
 
-module hive_hex(base_inner_height, base_wall_thickness, 
+module hive_hex(base_inner_height, base_wall_thickness, connector_height,
                 hive_depth, back_wall_type, 
                 tolerance){
     /*
@@ -113,10 +114,8 @@ module hive_hex(base_inner_height, base_wall_thickness,
         back_wall(base_total_height, 2, back_wall_type);
         translate([0,0,hive_depth/2]) 
         difference(){
-            hexagon_with_connectors(base_total_height, base_wall_thickness, 
-                                    hive_depth, tolerance);
+            hexagon_with_connectors(base_total_height, connector_height, hive_depth, tolerance);
             hexagon(base_inner_height, hive_depth*2);
         };
     }
 }
-
