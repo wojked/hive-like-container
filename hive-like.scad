@@ -4,10 +4,10 @@
 HEX_HEIGHT = 65.4;
 
 // What is depth of the main hex, so that the drawer would fit? (distance from the front edge to the beginning of the back wall)
-DEPTH = 40; // [2:40];
+DEPTH = 20; //
 
 // What is the type of the back wall?
-BACK_WALL_TYPE = 0; // [0:None,1:Solid,2:Openwork]
+BACK_WALL_TYPE = 2; // [0:None,1:Solid,2:Openwork]
 
 // What is the depth of the back wall? (it will be added to the total depth)
 BACK_WALL_DEPTH = 2; // [0:10];
@@ -19,10 +19,10 @@ WALL_THICKNESS = 4.82;
 CONNECTOR_HEIGHT = 4.82;
 
 // Tolerance reduces the positive connector size, so it is more likely it fits.
-CONNECTOR_TOLERANCE = 0;    // [0:4]
+CONNECTOR_TOLERANCE = 0.0;    // [0.0:0.01:4.0]
 
-// How much should the connectors be "hidden" within the main hex body.
-CONNECTOR_OFFSET  = 0.8; // [0.0:0.1:1.0]
+// What fraction of the connector should be "hidden" within the main hex body.
+CONNECTOR_OFFSET  = 0.8; // [0.1:0.1:0.99]
 
 
 /* 
@@ -47,8 +47,8 @@ module hive_hex(base_inner_height, base_wall_thickness, connector_height, connec
     base_total_height = total_height(base_inner_height, base_wall_thickness);
     base_total_depth = hive_depth + back_wall_depth;
                     
-    echo(str("Total base height:", base_total_height));                    
-    echo(str("Total base depth:", base_total_depth));                    
+//    echo(str("Total base height:", base_total_height));                    
+//    echo(str("Total base depth:", base_total_depth));                    
     
     union(){
         back_wall(base_inner_height, back_wall_type, back_wall_depth);
@@ -82,8 +82,7 @@ module hexagon(size, height) {
     type:
     0 - none
     1 - solid
-    2 - openwork (ajour-like)
-    
+    2 - openwork (ajour)
 */
 module back_wall(height, type, depth){
     if (type==0) {
@@ -116,15 +115,13 @@ module back_wall(height, type, depth){
             };
             hexagon(height+depth/2, depth*2);
         }
-
     }    
 }
 
 
-module row_of_connectors(cube_width, cube_height, cube_depth, connector_size, position, offset_ratio){
+module connectors_set(cube_width, cube_height, cube_depth, connector_size, position, offset_ratio){
     /*
-    This module draws a raw of connectors
-    
+    This module draws a set of connectors (a row of connectors)
     */
     x_translation = 0.22*cube_width;    
     y_translation = position*(cube_height/2 + connector_size/2 - connector_size*offset_ratio);      
@@ -132,7 +129,6 @@ module row_of_connectors(cube_width, cube_height, cube_depth, connector_size, po
     for (n = [-1, 0, 1]) {
         translate([x_translation*n,y_translation,0]) 
         hexagon(connector_size, cube_depth*1.0);
-        //cube([connector_size, connector_size, connector_size], true);
     }        
 }
 
@@ -144,17 +140,16 @@ module cube_with_connectors(dimmensions, connector_size, connector_offset, conne
     negative_position = -1; 
     positive_position = 1;  
     
-    echo (str("Connector tolerance: ",connector_tolerance, "resulted in connector sizes",
-    "\nNEGATIVE: ", connector_size, "\nPOSITIVE:", connector_size-connector_tolerance,"\n"));
+//    echo (str("Connector tolerance: ",connector_tolerance, "resulted in connector sizes", "\nNEGATIVE: ", connector_size, "\nPOSITIVE:", connector_size-connector_tolerance,"\n"));
         
     union(){
         difference(){
             cube(dimmensions, true);
-            row_of_connectors(hex_side_width, hex_height, hive_depth*2, connector_size, 
+            connectors_set(hex_side_width, hex_height, hive_depth*2, connector_size, 
             negative_position, connector_offset);
         }
 
-        row_of_connectors(hex_side_width, hex_height, hive_depth, connector_size-connector_tolerance, positive_position, 
+        connectors_set(hex_side_width, hex_height, hive_depth, connector_size-connector_tolerance, positive_position, 
         1 - connector_offset);
     }
 }
