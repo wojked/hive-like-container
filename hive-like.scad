@@ -6,8 +6,6 @@ hexagon_height = 65.4;
 // What is depth of the main hex, so that the drawer would fit? (distance from the front edge to the beginning of the back wall)
 hexagon_depth = 20; //
 
-/* [Back Wall] */
-
 // What is the type of the back wall?
 back_wall_type = 2; // [0:None,1:Solid,2:Openwork]
 
@@ -16,8 +14,6 @@ back_wall_depth = 2; // [0:10];
 
 // What is the desired thickness of the main hex, so that it is sturdy enough?
 wall_thickness = 4.82;
-
-/* [Connectors] */
 
 // What is the desired distance of two parallel edges of the connector hex? 
 connector_heigth = 4.82;
@@ -37,7 +33,7 @@ connector_offset  = 0.8; // [0.1:0.1:0.99]
     Print the part !
     With the defaults, it is most likely compatibile with the Hive system 
 */
-hive_hex(hexagon_height, wall_thickness, connector_heigth, CONNECTOR_OFFSET, connector_tolerance, hexagon_depth, back_wall_type, back_wall_depth);
+hive_hex(hexagon_height, wall_thickness, connector_heigth, connector_offset, connector_tolerance, hexagon_depth, back_wall_type, back_wall_depth);
 
 
 /*
