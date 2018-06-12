@@ -25,10 +25,6 @@ connector_tolerance = 0.0;    // [0.0:0.01:4.0]
 connector_offset  = 0.8; // [0.1:0.1:0.99]
 
 
-/* 
-    This is the hex that is most likely compatibile with the Hive system 
-*/
-
 /*
     Print the part !
     With the defaults, it is most likely compatibile with the Hive system 
