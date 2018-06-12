@@ -7,12 +7,12 @@ HEXAGON_HEIGHT = 65.4;
 HEXAGON_DEPTH = 20;
 
 // What is the desired thickness of the main hex, so that it is sturdy enough?
-WALL_THICKNESS = 4.82;
+HEXAGON_WALL_THICKNESS = 4.82;
 
 /* [BACK WALL] */
 
 // What is the type of the back wall?
-BACK_WALL_TYPE = 2; // [0:None,1:Solid,2:Openwork]
+BACK_WALL_TYPE = 1; // [0:None,1:Solid,2:Openwork]
 
 // What is the depth of the back wall? (it will be added to the total depth)
 BACK_WALL_DEPTH = 2; // [0:10]
@@ -21,6 +21,9 @@ BACK_WALL_DEPTH = 2; // [0:10]
 
 // What is the desired distance of two parallel edges of the connector hex? 
 CONNECTOR_HEIGHT = 4.82;
+
+// What is the desired distance between the central and side connectors
+CONNECTOR_DISTANCE = 14.46;
 
 // What fraction of the connector should be "hidden" within the main hex body.
 CONNECTOR_OFFSET  = 0.8; // [0.6:0.1:0.9]
@@ -34,9 +37,9 @@ CONNECTOR_TOLERANCE = 0.0;    // [0.0:0.01:4.0]
     With the defaults, it is most likely compatibile with the Hive system 
 */
 hive_hexagon(
-    HEXAGON_HEIGHT, HEXAGON_DEPTH, WALL_THICKNESS, 
+    HEXAGON_HEIGHT, HEXAGON_DEPTH, HEXAGON_WALL_THICKNESS, 
     BACK_WALL_TYPE, BACK_WALL_DEPTH, 
-    CONNECTOR_HEIGHT, CONNECTOR_OFFSET, CONNECTOR_TOLERANCE
+    CONNECTOR_HEIGHT, CONNECTOR_DISTANCE, CONNECTOR_OFFSET, CONNECTOR_TOLERANCE
 );
 
 
@@ -44,10 +47,10 @@ hive_hexagon(
     Generates the hive_hex.
 */
 module hive_hexagon(
-    hexagon_height, hexagon_depth, wall_thickness, 
+    hexagon_height, hexagon_depth, hexagon_wall_thickness, 
     back_wall_type, back_wall_depth,    
-    connector_height, connector_offset, connector_tolerance){
-    base_total_height = total_height(hexagon_height, wall_thickness);
+    connector_height, connector_distance, connector_offset, connector_tolerance){
+    base_total_height = total_height(hexagon_height, hexagon_wall_thickness);
     base_total_depth = hexagon_depth + back_wall_depth;
                     
     echo(str("Total base height:", base_total_height));                    
@@ -58,7 +61,7 @@ module hive_hexagon(
         
         translate([0,0,base_total_depth/2]) 
         difference(){
-            hexagon_with_connectors(base_total_height, connector_height, connector_offset, connector_tolerance, base_total_depth);
+            hexagon_with_connectors(base_total_height, connector_height, connector_distance, connector_offset, connector_tolerance, base_total_depth);
             hexagon(hexagon_height, base_total_depth*2);
         };
     }
@@ -122,11 +125,13 @@ module back_wall(hexagon_height, type, depth){
 }
 
 
-module connectors_set(cube_width, cube_height, cube_depth, connector_size, position, offset_ratio){
+module connectors_set(cube_width, cube_height, cube_depth, connector_size, connector_distance, position, offset_ratio){
     /*
     This module draws a set of connectors (a row of connectors)
     */
-    x_translation = 0.22*cube_width;    
+    //x_translation = 0.22*cube_width; 
+    x_translation = connector_distance - vertex_to_vertex_distance(connector_size);
+    echo(x_translation);
     y_translation = position*(cube_height/2 + connector_size/2 - connector_size*offset_ratio);      
 
     for (n = [-1, 0, 1]) {
@@ -135,7 +140,7 @@ module connectors_set(cube_width, cube_height, cube_depth, connector_size, posit
     }        
 }
 
-module cube_with_connectors(dimmensions, connector_size, connector_offset, connector_tolerance) {
+module cube_with_connectors(dimmensions, connector_size, connector_distance, connector_offset, connector_tolerance) {
     hex_side_width = dimmensions[0];
     hex_height = dimmensions[1];
     hive_depth = dimmensions[2]; 
@@ -148,12 +153,15 @@ module cube_with_connectors(dimmensions, connector_size, connector_offset, conne
     union(){
         difference(){
             cube(dimmensions, true);
-            connectors_set(hex_side_width, hex_height, hive_depth*2, connector_size, 
-            negative_position, connector_offset);
+            connectors_set(
+                hex_side_width, hex_height, hive_depth*2, 
+                connector_size, connector_distance, 
+                negative_position, connector_offset);
         }
-
-        connectors_set(hex_side_width, hex_height, hive_depth, connector_size-connector_tolerance, positive_position, 
-        1 - connector_offset);
+        connectors_set(
+            hex_side_width, hex_height, hive_depth, 
+            connector_size-connector_tolerance, connector_distance,
+            positive_position, 1 - connector_offset);
     }
 }
 
@@ -161,20 +169,25 @@ module cube_with_connectors(dimmensions, connector_size, connector_offset, conne
 /*
     Modified version of the hexagon.
 */
-module hexagon_with_connectors(size, connector_size, connector_offset, connector_tolerance, height) {
+module hexagon_with_connectors(size, connector_size, connector_distance, connector_offset, connector_tolerance, height) {
   angle_step = 60*2;   // Every second box
 
   // Iterate 3 times
   for (n = [0:1:2]){
       rotate([0,0, n*angle_step]) 
-      cube_with_connectors([edge_length(size), size, height], connector_size, connector_offset, connector_tolerance);
+      cube_with_connectors([edge_length(size), size, height], connector_size, connector_distance, connector_offset, connector_tolerance);
   }
 }
 
 /*
-    Calculates total height based on inner height and wall thickness
+    Calculates total height (edge to edge) based on inner height and wall thickness
 */
 function total_height(inner_height, wall_thickness) = inner_height + wall_thickness*2;
+
+/*
+    Calculates the vertex to vertex distance
+*/
+function vertex_to_vertex_distance(edge_to_edge_distance) = edge_to_edge_distance*1.1547;
 
 /*
     Calculates the hexagon edge length
