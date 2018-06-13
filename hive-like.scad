@@ -12,24 +12,24 @@ HEXAGON_WALL_THICKNESS = 4.82;
 /* [BACK WALL] */
 
 // What is the type of the back wall?
-BACK_WALL_TYPE = 2; // [0:None,1:Solid,2:Openwork]
+BACK_WALL_TYPE = 0; // [0:None,1:Solid,2:Openwork]
 
 // What is the depth of the back wall? (it will be added to the total depth)
-BACK_WALL_DEPTH = 2; // [0:10]
+BACK_WALL_DEPTH = 0; // [0:10]
 
 /* [CONNECTORS] */
 
 // What is the desired distance of two parallel edges of the connector hex? 
-CONNECTOR_HEIGHT = 4.82;
+CONNECTOR_HEIGHT = 3.85;
 
 // What is the desired distance between the central and side connectors
-CONNECTOR_DISTANCE = 14.46;
+CONNECTOR_DISTANCE = 5.5;
 
 // What fraction of the connector should be "hidden" within the main hex body.
 CONNECTOR_OFFSET  = 0.8; // [0.6:0.1:0.9]
 
 // Tolerance reduces the positive connector size, so it is more likely it fits.
-CONNECTOR_TOLERANCE = 0.0;    // [0.0:0.01:4.0]
+CONNECTOR_TOLERANCE = 0.19;    // [0.0:0.01:4.0]
 
 /* [HIDDEN] */
 /*
@@ -125,18 +125,18 @@ module back_wall(hexagon_height, type, depth){
 }
 
 
-module connectors_set(cube_width, cube_height, cube_depth, connector_size, connector_distance, position, offset_ratio){
+module connectors_set(cube_width, cube_height, cube_depth, connector_size, connector_distance, position, offset_ratio, tolerance){
     /*
     This module draws a set of connectors (a row of connectors)
     */
     //x_translation = 0.22*cube_width; 
-    x_translation = connector_distance - vertex_to_vertex_distance(connector_size);
+    x_translation = connector_distance + vertex_to_vertex_distance(connector_size);
     echo(x_translation);
     y_translation = position*(cube_height/2 + connector_size/2 - connector_size*offset_ratio);      
 
     for (n = [-1, 0, 1]) {
         translate([x_translation*n,y_translation,0]) 
-        hexagon(connector_size, cube_depth*1.0);
+        hexagon(connector_size-tolerance, cube_depth*1.0);
     }        
 }
 
@@ -148,7 +148,7 @@ module cube_with_connectors(dimmensions, connector_size, connector_distance, con
     negative_position = -1; 
     positive_position = 1;  
     
-//    echo (str("Connector tolerance: ",connector_tolerance, "resulted in connector sizes", "\nNEGATIVE: ", connector_size, "\nPOSITIVE:", connector_size-connector_tolerance,"\n"));
+    echo (str("Connector tolerance: ",connector_tolerance, "resulted in connector sizes", "\nNEGATIVE: ", connector_size, "\nPOSITIVE:", connector_size-connector_tolerance,"\n"));
         
     union(){
         difference(){
@@ -156,12 +156,12 @@ module cube_with_connectors(dimmensions, connector_size, connector_distance, con
             connectors_set(
                 hex_side_width, hex_height, hive_depth*2, 
                 connector_size, connector_distance, 
-                negative_position, connector_offset);
+                negative_position, connector_offset, 0);
         }
         connectors_set(
             hex_side_width, hex_height, hive_depth, 
-            connector_size-connector_tolerance, connector_distance,
-            positive_position, 1 - connector_offset);
+            connector_size, connector_distance,
+            positive_position, 1 - connector_offset, connector_tolerance);
     }
 }
 
