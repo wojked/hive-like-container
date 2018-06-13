@@ -12,24 +12,24 @@ HEXAGON_WALL_THICKNESS = 4.82;
 /* [BACK WALL] */
 
 // What is the type of the back wall?
-BACK_WALL_TYPE = 2; // [0:None,1:Solid,2:Openwork]
+BACK_WALL_TYPE = 0; // [0:None,1:Solid,2:Openwork]
 
 // What is the depth of the back wall? (it will be added to the total depth)
-BACK_WALL_DEPTH = 2; // [0:10]
+BACK_WALL_DEPTH = 0; // [0:10]
 
 /* [CONNECTORS] */
 
 // What is the desired distance of two parallel edges of the connector hex? 
-CONNECTOR_HEIGHT = 4.82;
+CONNECTOR_HEIGHT = 3.85;
 
 // What is the desired distance between the central and side connectors
-CONNECTOR_DISTANCE = 14.46;
+CONNECTOR_DISTANCE = 12.46;
 
 // What fraction of the connector should be "hidden" within the main hex body.
 CONNECTOR_OFFSET  = 0.8; // [0.6:0.1:0.9]
 
 // Tolerance reduces the positive connector size, so it is more likely it fits.
-CONNECTOR_TOLERANCE = 0.0;    // [0.0:0.01:4.0]
+CONNECTOR_TOLERANCE = 0.05;    // [0.0:0.01:4.0]
 
 /* [HIDDEN] */
 /*
