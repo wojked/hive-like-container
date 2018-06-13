@@ -29,7 +29,7 @@ CONNECTOR_DISTANCE = 5.5;
 CONNECTOR_OFFSET  = 0.8; // [0.6:0.1:0.9]
 
 // Tolerance reduces the positive connector size, so it is more likely it fits.
-CONNECTOR_TOLERANCE = 0.15;    // [0.0:0.01:4.0]
+CONNECTOR_TOLERANCE = 0.19;    // [0.0:0.01:4.0]
 
 /* [HIDDEN] */
 /*
