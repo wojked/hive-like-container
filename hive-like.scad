@@ -23,13 +23,13 @@ BACK_WALL_DEPTH = 0; // [0:10]
 CONNECTOR_HEIGHT = 3.85;
 
 // What is the desired distance between the central and side connectors
-CONNECTOR_DISTANCE = 12.46;
+CONNECTOR_DISTANCE = 15.46;
 
 // What fraction of the connector should be "hidden" within the main hex body.
 CONNECTOR_OFFSET  = 0.8; // [0.6:0.1:0.9]
 
 // Tolerance reduces the positive connector size, so it is more likely it fits.
-CONNECTOR_TOLERANCE = 0.05;    // [0.0:0.01:4.0]
+CONNECTOR_TOLERANCE = 0.1;    // [0.0:0.01:4.0]
 
 /* [HIDDEN] */
 /*
@@ -125,7 +125,7 @@ module back_wall(hexagon_height, type, depth){
 }
 
 
-module connectors_set(cube_width, cube_height, cube_depth, connector_size, connector_distance, position, offset_ratio){
+module connectors_set(cube_width, cube_height, cube_depth, connector_size, connector_distance, position, offset_ratio, tolerance){
     /*
     This module draws a set of connectors (a row of connectors)
     */
@@ -136,7 +136,7 @@ module connectors_set(cube_width, cube_height, cube_depth, connector_size, conne
 
     for (n = [-1, 0, 1]) {
         translate([x_translation*n,y_translation,0]) 
-        hexagon(connector_size, cube_depth*1.0);
+        hexagon(connector_size-tolerance, cube_depth*1.0);
     }        
 }
 
@@ -156,12 +156,12 @@ module cube_with_connectors(dimmensions, connector_size, connector_distance, con
             connectors_set(
                 hex_side_width, hex_height, hive_depth*2, 
                 connector_size, connector_distance, 
-                negative_position, connector_offset);
+                negative_position, connector_offset, 0);
         }
         connectors_set(
             hex_side_width, hex_height, hive_depth, 
-            connector_size-connector_tolerance, connector_distance,
-            positive_position, 1 - connector_offset);
+            connector_size, connector_distance,
+            positive_position, 1 - connector_offset, connector_tolerance);
     }
 }
 
