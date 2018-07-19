@@ -4,7 +4,7 @@
 HEXAGON_HEIGHT = 65.4;
 
 // What is depth of the main hex, so that the drawer would fit? (distance from the front edge to the beginning of the back wall)
-HEXAGON_DEPTH = 3;
+HEXAGON_DEPTH = 75;
 
 // What is the desired thickness of the main hex, so that it is sturdy enough?
 HEXAGON_WALL_THICKNESS = 4.82;
@@ -15,7 +15,7 @@ HEXAGON_WALL_THICKNESS = 4.82;
 BACK_WALL_TYPE = 2; // [0:None,1:Solid,2:Openwork]
 
 // What is the depth of the back wall? (it will be added to the total depth)
-BACK_WALL_DEPTH = 1; // [0:10]
+BACK_WALL_DEPTH = 2; // [0:10]
 
 /* [CONNECTORS] */
 
